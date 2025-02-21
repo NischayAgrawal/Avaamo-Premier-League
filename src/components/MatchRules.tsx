@@ -28,7 +28,6 @@ function MatchRules() {
       const response = await axios.get(
         `http://localhost:3000/api/rules?sport=${sportName}&year=${selectedYear}`
       );
-      console.log(response.data);
       setRules(response.data);
     } catch (error) {
       console.error("Error fetching rules:", error);

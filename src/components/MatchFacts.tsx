@@ -71,7 +71,6 @@ function MatchFacts() {
       const response = await axios.get(
         `http://localhost:3000/api/matches?sport=${sportName}&year=${selectedYear}`
       );
-      console.log(response.data);
       setMatches(response.data);
     } catch (error) {
       console.error("Error fetching matches:", error);
@@ -80,7 +79,6 @@ function MatchFacts() {
 
   const handleAdd = async () => {
     try {
-      console.log(newMatch);
       await axios.post("http://localhost:3000/api/matches", {
         ...newMatch,
         sport: sportName,

@@ -2,14 +2,17 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Plus, Trash2 } from "lucide-react";
 import axios from "axios";
+import { useYear } from "../context/YearContext";
 
 interface Photo {
   _id: string;
   imageUrl: string;
   caption: string;
+  year: number;
 }
 
 function Gallery() {
+  const { selectedYear } = useYear();
   const { sportName } = useParams();
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -25,7 +28,7 @@ function Gallery() {
   const fetchPhotos = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/gallery?sport=${sportName}`
+        `http://localhost:3000/api/gallery?sport=${sportName}&year=${selectedYear}`
       );
       setPhotos(response.data);
     } catch (error) {
@@ -38,6 +41,7 @@ function Gallery() {
       await axios.post("http://localhost:3000/api/gallery", {
         ...newPhoto,
         sport: sportName,
+        year: selectedYear,
       });
       setShowAddForm(false);
       setNewPhoto({ imageUrl: "", caption: "" });

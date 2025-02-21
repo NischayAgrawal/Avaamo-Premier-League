@@ -13,11 +13,14 @@ interface Sport {
 const SPORTS: Sport[] = [
   { id: "cricket", name: "Cricket", icon: "🏏" },
   { id: "football", name: "Football", icon: "⚽" },
-  { id: "basketball", name: "Basketball", icon: "🏀" },
+  { id: "basketball", name: "Basketball", icon: "⛹️‍♀️" },
   { id: "volleyball", name: "Volleyball", icon: "🏐" },
+  //{ id: "badminton", name: "badminton", icon: "🏸" },
+  //{ id: "throwball", name: "throwball", icon: "🏀" },
 ];
 
 function HomePage() {
+  //const [sports, setSports] = useState([]); // add sport
   const navigate = useNavigate();
   const [years, setYears] = useState<number[]>([]);
   const { selectedYear, setSelectedYear } = useYear();
@@ -26,6 +29,21 @@ function HomePage() {
     fetchYears();
   }, []);
 
+  /*
+  //ADD SPORT
+  useEffect(() => {
+    const fetchSports = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/sports");
+        setSports(response.data);
+      } catch (error) {
+        console.error("Error fetching sports:", error.message || error);
+      }
+    };
+
+    fetchSports();
+  }, []);
+*/
   const fetchYears = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/years");

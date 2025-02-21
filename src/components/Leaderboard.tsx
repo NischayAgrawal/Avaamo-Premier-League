@@ -17,7 +17,6 @@ function Leaderboard() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedRank, setEditedRank] = useState<number>(0);
-  //const selectedYear = 2025; // Replace with the year you want to filter by
   const { selectedYear } = useYear();
 
   useEffect(() => {

@@ -1,11 +1,12 @@
-import express from 'express';
+import express from "express";
 const router = express.Router();
 
 // Get all years
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const currentYear = new Date().getFullYear();
-    const years = [currentYear - 1, currentYear, currentYear + 1];
+    //const years = [currentYear - 1, currentYear, currentYear + 1];
+    const years = [currentYear, currentYear + 1];
     res.json(years);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -13,7 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 // Add a new year
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { year } = req.body;
     // In a real application, you would save this to the database

@@ -6,8 +6,8 @@ const router = express.Router();
 // Get photos by sport
 router.get("/", async (req, res) => {
   try {
-    const { sport } = req.query;
-    const photos = await Gallery.find({ sport });
+    const { sport, year } = req.query;
+    const photos = await Gallery.find({ sport, year });
     res.json(photos);
   } catch (error) {
     res.status(500).json({ message: error.message });

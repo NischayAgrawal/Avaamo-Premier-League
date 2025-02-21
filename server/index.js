@@ -48,7 +48,9 @@ import teamsRouter from "./routes/teams.js";
 import matchesRouter from "./routes/matches.js";
 import rulesRouter from "./routes/rules.js";
 import galleryRouter from "./routes/gallery.js";
+//const sportsRoute = require("./routes/sportsRoute.js"); //add sport
 
+//app.use("/api/sports", sportsRoute); //add sport
 app.use("/api/years", yearsRouter);
 app.use("/api/teams", teamsRouter);
 app.use("/api/matches", matchesRouter);
