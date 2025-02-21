@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import axios from "axios";
+import { useYear } from "../context/YearContext";
 
 interface Match {
   _id: string;
@@ -15,10 +16,12 @@ interface Match {
   };
   result: string;
   date: string;
+  year: number;
 }
 
 function MatchFacts() {
   const { sportName } = useParams();
+  const { selectedYear } = useYear();
   const [matches, setMatches] = useState<Match[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editedMatch, setEditedMatch] = useState({
@@ -66,8 +69,9 @@ function MatchFacts() {
   const fetchMatches = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/matches?sport=${sportName}`
+        `http://localhost:3000/api/matches?sport=${sportName}&year=${selectedYear}`
       );
+      console.log(response.data);
       setMatches(response.data);
     } catch (error) {
       console.error("Error fetching matches:", error);
@@ -80,6 +84,7 @@ function MatchFacts() {
       await axios.post("http://localhost:3000/api/matches", {
         ...newMatch,
         sport: sportName,
+        year: selectedYear,
       });
       setShowAddForm(false);
       setNewMatch({

@@ -26,11 +26,9 @@ function Leaderboard() {
 
   const fetchTeams = async () => {
     try {
-      console.log(sportName, selectedYear);
       const response = await axios.get(
         `http://localhost:3000/api/teams?sport=${sportName}&year=${selectedYear}`
       );
-      console.log(response.data);
       setTeams(response.data.sort((a: Team, b: Team) => a.rank - b.rank));
     } catch (error) {
       console.error("Error fetching teams:", error);

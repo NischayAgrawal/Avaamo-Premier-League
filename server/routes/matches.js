@@ -6,8 +6,8 @@ const router = express.Router();
 // Get matches by sport
 router.get("/", async (req, res) => {
   try {
-    const { sport } = req.query;
-    const matches = await Match.find({ sport });
+    const { sport, year } = req.query;
+    const matches = await Match.find({ sport, year });
     res.json(matches);
   } catch (error) {
     res.status(500).json({ message: error.message });

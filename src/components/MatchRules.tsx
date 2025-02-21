@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Plus, Edit2, Trash2, Save, X } from "lucide-react";
 import axios from "axios";
+import { useYear } from "../context/YearContext";
 
 interface Rule {
   _id: string;
   content: string;
+  year: number;
 }
 
 function MatchRules() {
+  const { selectedYear } = useYear();
   const { sportName } = useParams();
   const [rules, setRules] = useState<Rule[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -23,8 +26,9 @@ function MatchRules() {
   const fetchRules = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/rules?sport=${sportName}`
+        `http://localhost:3000/api/rules?sport=${sportName}&year=${selectedYear}`
       );
+      console.log(response.data);
       setRules(response.data);
     } catch (error) {
       console.error("Error fetching rules:", error);
@@ -36,6 +40,7 @@ function MatchRules() {
       await axios.post("http://localhost:3000/api/rules", {
         sport: sportName,
         content: newRule,
+        year: selectedYear,
       });
       setNewRule("");
       setShowAddForm(false);

@@ -7,7 +7,7 @@ const matchSchema = new mongoose.Schema({
   },
   year: {
     type: Number,
-    required: false, //edited
+    required: true, //edited
   },
   team1: {
     name: String,
