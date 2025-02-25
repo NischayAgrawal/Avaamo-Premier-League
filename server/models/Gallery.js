@@ -7,7 +7,7 @@ const gallerySchema = new mongoose.Schema({
   },
   year: {
     type: Number,
-    required: false, //edited
+    required: true, //edited
   },
   imageUrl: {
     type: String,

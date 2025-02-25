@@ -16,11 +16,8 @@ router.get("/", async (req, res) => {
 
 // Add new match
 router.post("/", async (req, res) => {
-  console.log("coming inside the api call");
-  console.log(req.body);
   try {
     const match = new Match(req.body);
-
     const newMatch = await match.save();
     res.status(201).json(newMatch);
   } catch (error) {

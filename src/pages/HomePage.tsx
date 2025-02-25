@@ -4,56 +4,82 @@ import { Trophy } from "lucide-react";
 import axios from "axios";
 import { useYear } from "../context/YearContext";
 
-interface Sport {
-  id: string;
-  name: string;
-  icon: string;
-}
-
-const SPORTS: Sport[] = [
-  { id: "cricket", name: "Cricket", icon: "🏏" },
-  { id: "football", name: "Football", icon: "⚽" },
-  { id: "basketball", name: "Basketball", icon: "⛹️‍♀️" },
-  { id: "volleyball", name: "Volleyball", icon: "🏐" },
-  //{ id: "badminton", name: "badminton", icon: "🏸" },
-  //{ id: "throwball", name: "throwball", icon: "🏀" },
+const ALL_SPORTS = [
+  "Cricket",
+  "Football",
+  "Basketball",
+  "Volleyball",
+  "Badminton",
+  "Table Tennis",
+  "Throwball",
 ];
 
 function HomePage() {
-  //const [sports, setSports] = useState([]); // add sport
   const navigate = useNavigate();
-  const [years, setYears] = useState<number[]>([]);
   const { selectedYear, setSelectedYear } = useYear();
+  const [years, setYears] = useState<number[]>([]);
+  const [sports, setSports] = useState<string[]>([]);
+  const [newSport, setNewSport] = useState<string>("");
 
   useEffect(() => {
     fetchYears();
   }, []);
 
-  /*
-  //ADD SPORT
   useEffect(() => {
-    const fetchSports = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/api/sports");
-        setSports(response.data);
-      } catch (error) {
-        console.error("Error fetching sports:", error.message || error);
-      }
-    };
+    if (selectedYear) {
+      fetchSportsForYear();
+    }
+  }, [selectedYear]);
 
-    fetchSports();
-  }, []);
-*/
   const fetchYears = async () => {
     try {
       const response = await axios.get("http://localhost:3000/api/years");
-      if (response.data && Array.isArray(response.data)) {
-        setYears(response.data);
-      } else {
-        console.error("Invalid response format:", response.data);
-      }
+      setYears(response.data);
     } catch (error) {
       console.error("Error fetching years:", error.message || error);
+    }
+  };
+
+  const fetchSportsForYear = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/sports/${selectedYear}`
+      );
+      setSports(response.data.map((sport) => sport.name));
+    } catch (error) {
+      console.error("Error fetching sports:", error.message || error);
+    }
+  };
+
+  console.log(sports);
+
+  const addSport = async () => {
+    if (!newSport) return;
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/sports/${selectedYear}`,
+        {
+          name: newSport,
+          year: selectedYear,
+        }
+      );
+      setSports(response.data.map((sport) => sport.name));
+    } catch (error) {
+      console.error("Error adding sport:", error.message || error);
+    }
+
+    setNewSport(""); // Reset dropdown
+  };
+
+  const deleteSport = async (name: string) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/sports/${selectedYear}/${name}`
+      );
+      setSports(response.data.map((sport) => sport.name));
+    } catch (error) {
+      console.error("Error deleting sport:", error.message || error);
     }
   };
 
@@ -63,7 +89,7 @@ function HomePage() {
       await axios.post("http://localhost:3000/api/years", { year: newYear });
       fetchYears();
     } catch (error) {
-      console.error("Error adding new year:", error);
+      console.error("Error adding new year:", error.message || error);
     }
   };
 
@@ -98,18 +124,48 @@ function HomePage() {
         </div>
       </div>
 
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <select
+          value={newSport}
+          onChange={(e) => setNewSport(e.target.value)}
+          className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Select a sport to add</option>
+          {ALL_SPORTS.filter((sport) => !sports.includes(sport)).map(
+            (sport) => (
+              <option key={sport} value={sport}>
+                {sport}
+              </option>
+            )
+          )}
+        </select>
+        <button
+          onClick={addSport}
+          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+        >
+          Add Sport
+        </button>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {SPORTS.map((sport) => (
+        {sports.map((sport) => (
           <div
-            key={sport.id}
-            onClick={() => navigate(`/sport/${sport.id}`)}
-            className="bg-white rounded-xl shadow-lg p-6 cursor-pointer transform transition-transform hover:scale-105"
+            key={sport}
+            className="bg-white rounded-xl shadow-lg p-6 transform transition-transform hover:scale-105"
           >
             <div className="flex flex-col items-center">
-              <span className="text-4xl mb-4">{sport.icon}</span>
-              <h2 className="text-xl font-semibold text-gray-800">
-                {sport.name}
+              <h2
+                className="text-xl font-semibold text-gray-800"
+                onClick={() => navigate(`/sport/${sport.toLowerCase()}`)}
+              >
+                {sport}
               </h2>
+              <button
+                onClick={() => deleteSport(sport)}
+                className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
