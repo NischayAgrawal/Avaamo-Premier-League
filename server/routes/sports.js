@@ -7,10 +7,9 @@ const INITIAL_SPORTS = ["Cricket", "Football", "Basketball", "Volleyball"];
 // Get all sports for a specific year
 router.get("/:year", async (req, res) => {
   const { year } = req.params;
-  //console.log(year);
   try {
     let sports = await Sport.find({ year: Number(year) });
-
+    console.log(sports.length);
     // If no sports exist for the year, seed with initial sports
     if (sports.length === 0) {
       const initialSports = INITIAL_SPORTS.map((name) => ({
@@ -31,6 +30,7 @@ router.get("/:year", async (req, res) => {
 // Add a new sport for a specific year
 router.post("/:year", async (req, res) => {
   const { name, year } = req.body;
+
   if (!name || !year) {
     return res.status(400).json({ error: "Sport name and year are required" });
   }

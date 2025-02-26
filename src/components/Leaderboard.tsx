@@ -25,6 +25,7 @@ function Leaderboard() {
 
   const fetchTeams = async () => {
     try {
+      console.log(sportName);
       const response = await axios.get(
         `http://localhost:3000/api/teams?sport=${sportName}&year=${selectedYear}`
       );

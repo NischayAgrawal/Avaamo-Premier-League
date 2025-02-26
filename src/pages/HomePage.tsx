@@ -27,6 +27,7 @@ function HomePage() {
 
   useEffect(() => {
     if (selectedYear) {
+      console.log("hello");
       fetchSportsForYear();
     }
   }, [selectedYear]);
@@ -51,7 +52,7 @@ function HomePage() {
     }
   };
 
-  console.log(sports);
+  //console.log(sports);
 
   const addSport = async () => {
     if (!newSport) return;
