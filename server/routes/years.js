@@ -5,8 +5,8 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const currentYear = new Date().getFullYear();
-    //const years = [currentYear - 1, currentYear, currentYear + 1];
-    const years = [currentYear, currentYear + 1];
+    const years = [currentYear - 1, currentYear];
+    //const years = [currentYear, currentYear + 1];
     res.json(years);
   } catch (error) {
     res.status(500).json({ message: error.message });

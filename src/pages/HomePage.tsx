@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trophy } from "lucide-react";
+import { Trophy, Trash2, PlusCircle } from "lucide-react";
 import axios from "axios";
 import { useYear } from "../context/YearContext";
 
@@ -10,7 +10,7 @@ const ALL_SPORTS = [
   "Basketball",
   "Volleyball",
   "Badminton",
-  "Table Tennis",
+  "Table-Tennis",
   "Throwball",
 ];
 
@@ -27,7 +27,6 @@ function HomePage() {
 
   useEffect(() => {
     if (selectedYear) {
-      console.log("hello");
       fetchSportsForYear();
     }
   }, [selectedYear]);
@@ -51,8 +50,6 @@ function HomePage() {
       console.error("Error fetching sports:", error.message || error);
     }
   };
-
-  //console.log(sports);
 
   const addSport = async () => {
     if (!newSport) return;
@@ -94,82 +91,171 @@ function HomePage() {
     }
   };
 
+  const getSportIcon = (sport: string) => {
+    // You can replace these with actual sport icons if available
+    const icons: { [key: string]: string } = {
+      Cricket: "🏏",
+      Football: "⚽",
+      Basketball: "🏀",
+      Volleyball: "🏐",
+      Badminton: "🏸",
+      "Table-Tennis": "🏓",
+      Throwball: "🥎",
+    };
+
+    return icons[sport] || "🏆";
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <div className="flex items-center justify-center mb-4">
-          <Trophy className="w-12 h-12 text-yellow-500 mr-4" />
-          <h1 className="text-4xl font-bold text-gray-800">
-            Avaamo Premier League
-          </h1>
-        </div>
-
-        <div className="flex items-center justify-center gap-4 mb-8">
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {years.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={addNewYear}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-          >
-            Add New Year
-          </button>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-center gap-4 mb-6">
-        <select
-          value={newSport}
-          onChange={(e) => setNewSport(e.target.value)}
-          className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Select a sport to add</option>
-          {ALL_SPORTS.filter((sport) => !sports.includes(sport)).map(
-            (sport) => (
-              <option key={sport} value={sport}>
-                {sport}
-              </option>
-            )
-          )}
-        </select>
-        <button
-          onClick={addSport}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
-        >
-          Add Sport
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {sports.map((sport) => (
-          <div
-            key={sport}
-            className="bg-white rounded-xl shadow-lg p-6 transform transition-transform hover:scale-105"
-          >
-            <div className="flex flex-col items-center">
-              <h2
-                className="text-xl font-semibold text-gray-800"
-                onClick={() => navigate(`/sport/${sport.toLowerCase()}`)}
-              >
-                {sport}
-              </h2>
-              <button
-                onClick={() => deleteSport(sport)}
-                className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <div className="container mx-auto px-6 py-12 max-w-6xl">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center mb-6 bg-yellow-50 px-8 py-4 rounded-full shadow-sm">
+            <Trophy className="w-10 h-10 text-yellow-500 mr-4" />
+            <h1 className="text-5xl font-bold text-gray-900 tracking-wide">
+              Avaamo Premier League
+            </h1>
           </div>
-        ))}
+
+          <p className="text-lg text-gray-600 mt-4 max-w-2xl mx-auto">
+            Manage sports competitions and track performance across different
+            years
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+            <div className="relative">
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+                className="pl-5 pr-10 py-3 text-lg border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none"
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year} Season
+                  </option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <button
+              onClick={addNewYear}
+              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-xl shadow-md hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg flex items-center"
+            >
+              <PlusCircle className="w-5 h-5 mr-2" />
+              Add New Year
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-lg p-8 mb-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Manage Sports
+          </h2>
+
+          <div className="flex flex-wrap items-center gap-4 mb-8">
+            <div className="relative flex-grow max-w-md">
+              <select
+                value={newSport}
+                onChange={(e) => setNewSport(e.target.value)}
+                className="w-full pl-5 pr-10 py-3 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white appearance-none"
+              >
+                <option value="">Select a sport to add</option>
+                {ALL_SPORTS.filter((sport) => !sports.includes(sport)).map(
+                  (sport) => (
+                    <option key={sport} value={sport}>
+                      {sport}
+                    </option>
+                  )
+                )}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <button
+              onClick={addSport}
+              className="px-6 py-3 bg-green-600 text-white font-medium rounded-xl shadow-md hover:bg-green-700 transition-all duration-300 flex items-center"
+              disabled={!newSport}
+            >
+              <PlusCircle className="w-5 h-5 mr-2" />
+              Add Sport
+            </button>
+          </div>
+
+          {sports.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {sports.map((sport) => (
+                <div
+                  key={sport}
+                  onClick={() => navigate(`/sport/${sport.toLowerCase()}`)}
+                  className="group relative bg-gray-50 border border-gray-100 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-blue-200 cursor-pointer"
+                >
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteSport(sport);
+                      }}
+                      className="p-2 bg-red-100 text-red-600 rounded-full hover:bg-red-600 hover:text-white transition-all duration-300"
+                      aria-label="Delete sport"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="px-6 py-8 flex flex-col items-center text-center">
+                    <div className="text-4xl mb-4">{getSportIcon(sport)}</div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                      {sport}
+                    </h3>
+                    <div className="mt-2 px-4 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full">
+                      View Details
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 px-4 bg-gray-50 rounded-xl border border-gray-100">
+              <div className="text-4xl mb-4">🏆</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                No Sports Added Yet
+              </h3>
+              <p className="text-gray-600 mb-6">
+                You can add sports using the dropdown above or reload to include
+                default sports.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

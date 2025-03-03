@@ -9,7 +9,6 @@ router.get("/:year", async (req, res) => {
   const { year } = req.params;
   try {
     let sports = await Sport.find({ year: Number(year) });
-    console.log(sports.length);
     // If no sports exist for the year, seed with initial sports
     if (sports.length === 0) {
       const initialSports = INITIAL_SPORTS.map((name) => ({

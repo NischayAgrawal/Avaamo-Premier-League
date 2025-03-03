@@ -3,18 +3,21 @@ import Team from "../models/Team.js";
 
 const router = express.Router();
 
-// Get teams by sport
+// Get teams by sport, sorted by total points (descending) and custom rank (ascending) as a tie-breaker
 router.get("/", async (req, res) => {
   try {
     const { sport, year } = req.query;
-    const teams = await Team.find({ sport, year });
+    const teams = await Team.find({ sport, year }).sort({
+      totalPoints: -1,
+      rank: 1,
+    });
     res.json(teams);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Update team rank
+// Update team rank (manual edit)
 router.patch("/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -25,4 +28,5 @@ router.patch("/:id", async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
+
 export default router;

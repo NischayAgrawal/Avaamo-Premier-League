@@ -33,6 +33,10 @@ const teamSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  totalPoints: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default mongoose.model("Team", teamSchema);

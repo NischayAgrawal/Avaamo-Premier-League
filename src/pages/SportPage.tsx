@@ -15,57 +15,66 @@ function SportPage() {
   const navigate = useNavigate();
   const { selectedYear } = useYear();
 
-  const formattedSportName =
-    sportName?.charAt(0).toUpperCase() + sportName?.slice(1);
+  const formattedSportName = sportName
+    ?.split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
   const tabs = [
     { path: "leaderboard", label: "Leaderboard" },
-    { path: "match-facts", label: "Match Facts" },
-    { path: "match-rules", label: "Match Rules" },
-    { path: "gallery", label: "Photo Gallery" },
+    { path: "match-facts", label: "Matches" },
+    { path: "match-rules", label: "Rules" },
+    { path: "gallery", label: "Gallery" },
   ];
 
   useEffect(() => {
-    // Redirect to the leaderboard tab if no specific tab is visited
     if (location.pathname === `/sport/${sportName}`) {
       navigate("leaderboard");
     }
-  }, []); //leaving the dependencies array is also fine as SportPage component will unmount and will receive new sportName and location.pathname props whenver we leave the page
+  }, [location.pathname, navigate, sportName]);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
+    <div className="container mx-auto px-6 py-12 space-y-12 max-w-6xl">
+      <div className="flex flex-col items-start">
         <Link
           to="/"
-          className="inline-flex items-center text-blue-500 hover:text-blue-600"
+          className="group inline-flex items-center text-blue-600 hover:text-blue-800 transition-all duration-300"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Home
+          <span className="bg-blue-50 p-2 rounded-full mr-3 group-hover:bg-blue-100 transition-all duration-300">
+            <ArrowLeft className="w-5 h-5" />
+          </span>
+          <span className="text-lg font-medium">Back to Home</span>
         </Link>
-        <h1 className="text-3xl font-bold text-gray-800 mt-4">
-          {formattedSportName}
-        </h1>
+
+        <div className="w-full flex justify-center mt-6">
+          <h1 className="text-5xl font-bold text-gray-900 relative">
+            <span className="relative z-10">{formattedSportName}</span>
+            <span className="absolute -bottom-3 left-0 right-0 h-3 bg-blue-100 z-0 opacity-50 rounded-full"></span>
+          </h1>
+        </div>
       </div>
 
-      <div className="mb-8">
-        <nav className="flex space-x-4">
+      <nav className="flex justify-center overflow-x-auto py-2">
+        <div className="inline-flex items-center p-1 bg-gray-50 rounded-xl shadow-sm">
           {tabs.map((tab) => (
             <Link
               key={tab.path}
               to={tab.path}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                location.pathname.includes(tab.path)
-                  ? "bg-blue-500 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
+              className={`px-6 py-3 rounded-xl text-lg font-medium transition-all duration-300
+                ${
+                  location.pathname.includes(tab.path)
+                    ? "bg-blue-600 text-white shadow-md transform scale-105"
+                    : "text-gray-600 hover:bg-gray-100"
+                }
+              `}
             >
               {tab.label}
             </Link>
           ))}
-        </nav>
-      </div>
+        </div>
+      </nav>
 
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
         <Outlet context={{ sportName, selectedYear }} />
       </div>
     </div>

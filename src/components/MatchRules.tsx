@@ -76,31 +76,33 @@ function MatchRules() {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Match Rules</h2>
+    <div className="p-6 space-y-6">
+      <header className="flex justify-center items-center mb-6">
+        <h2 className="text-4xl font-bold text-gray-800">Rules</h2>
+      </header>
+      <div className="flex justify-end">
         <button
           onClick={() => setShowAddForm(true)}
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700"
         >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Rule
+          <Plus className="w-5 h-5" />
+          <span>Add Rule</span>
         </button>
       </div>
 
       {showAddForm && (
-        <div className="mb-8 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-lg font-semibold mb-4">Add New Rule</h3>
+        <div className="p-4 bg-gray-100 rounded-md">
+          <h3 className="text-xl font-semibold mb-4">Add New Rule</h3>
           <textarea
             value={newRule}
             onChange={(e) => setNewRule(e.target.value)}
-            className="w-full h-32 p-2 border rounded-lg resize-none"
+            className="w-full h-32 p-2 border rounded-md resize-none"
             placeholder="Enter rule content..."
           />
-          <div className="mt-4 flex justify-end space-x-2">
+          <div className="flex justify-end space-x-2 mt-4">
             <button
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
             >
               Cancel
             </button>
@@ -116,42 +118,42 @@ function MatchRules() {
 
       <div className="space-y-4">
         {rules.map((rule) => (
-          <div key={rule._id} className="bg-gray-50 p-4 rounded-lg">
+          <div key={rule._id} className="p-4 bg-gray-100 rounded-md">
             {editingId === rule._id ? (
               <div>
                 <textarea
                   value={editedContent}
                   onChange={(e) => setEditedContent(e.target.value)}
-                  className="w-full h-32 p-2 border rounded-lg resize-none mb-2"
+                  className="w-full h-32 p-2 border rounded-md resize-none mb-4"
                 />
                 <div className="flex justify-end space-x-2">
                   <button
-                    onClick={() => handleSave(rule._id)}
-                    className="text-green-600 hover:text-green-800"
+                    onClick={() => setEditingId(null)}
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
                   >
-                    <Save className="w-5 h-5" />
+                    Cancel
                   </button>
                   <button
-                    onClick={() => setEditingId(null)}
-                    className="text-red-600 hover:text-red-800"
+                    onClick={() => handleSave(rule._id)}
+                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                   >
-                    <X className="w-5 h-5" />
+                    Save
                   </button>
                 </div>
               </div>
             ) : (
               <div className="flex justify-between items-start">
-                <p className="flex-1 text-gray-800">{rule.content}</p>
-                <div className="flex space-x-2 ml-4">
+                <p className="text-gray-800 flex-1">{rule.content}</p>
+                <div className="flex space-x-2">
                   <button
                     onClick={() => handleEdit(rule)}
-                    className="text-blue-600 hover:text-blue-800"
+                    className="px-2 py-1 text-blue-600 hover:text-blue-800"
                   >
                     <Edit2 className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => handleDelete(rule._id)}
-                    className="text-red-600 hover:text-red-800"
+                    className="px-2 py-1 text-red-600 hover:text-red-800"
                   >
                     <Trash2 className="w-5 h-5" />
                   </button>

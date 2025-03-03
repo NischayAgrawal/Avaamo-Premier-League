@@ -61,24 +61,29 @@ function Gallery() {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Photo Gallery</h2>
+    <div className="p-6 space-y-6">
+      <header className="flex justify-center items-center mb-6">
+        <h2 className="text-4xl font-bold text-gray-800">Gallery</h2>
+      </header>
+
+      <div className="flex justify-end">
         <button
           onClick={() => setShowAddForm(true)}
-          className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700"
         >
-          <Plus className="w-5 h-5 mr-2" />
-          Add Photo
+          <Plus className="w-5 h-5" />
+          <span>Add Photo</span>
         </button>
       </div>
 
       {showAddForm && (
-        <div className="mb-8 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-lg font-semibold mb-4">Add New Photo</h3>
-          <div className="space-y-4">
+        <div className="p-6 bg-white rounded-lg shadow-lg">
+          <h3 className="text-2xl font-bold mb-6 text-gray-800 border-b pb-2">
+            Add New Photo
+          </h3>
+          <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Image URL
               </label>
               <input
@@ -87,12 +92,12 @@ function Gallery() {
                 onChange={(e) =>
                   setNewPhoto({ ...newPhoto, imageUrl: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="block w-full px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
                 placeholder="Enter image URL"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
                 Caption
               </label>
               <input
@@ -101,21 +106,21 @@ function Gallery() {
                 onChange={(e) =>
                   setNewPhoto({ ...newPhoto, caption: e.target.value })
                 }
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="block w-full px-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
                 placeholder="Enter caption"
               />
             </div>
           </div>
-          <div className="mt-4 flex justify-end space-x-2">
+          <div className="mt-6 flex justify-end space-x-4">
             <button
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              className="px-4 py-2 bg-gray-100 text-gray-700 font-semibold rounded-lg shadow hover:bg-gray-200"
             >
               Cancel
             </button>
             <button
               onClick={handleAdd}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700"
             >
               Add Photo
             </button>
@@ -123,29 +128,29 @@ function Gallery() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {photos.map((photo) => (
           <div
             key={photo._id}
-            className="bg-gray-50 rounded-lg overflow-hidden"
+            className="bg-white rounded-lg shadow-md overflow-hidden group"
           >
-            <div className="aspect-w-16 aspect-h-9">
+            <div className="relative">
               <img
                 src={photo.imageUrl}
                 alt={photo.caption}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-48"
               />
+              <button
+                onClick={() => handleDelete(photo._id)}
+                className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
             </div>
             <div className="p-4">
-              <p className="text-gray-800">{photo.caption}</p>
-              <div className="mt-2 flex justify-end space-x-2">
-                <button
-                  onClick={() => handleDelete(photo._id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
+              <p className="text-gray-800 font-semibold truncate">
+                {photo.caption}
+              </p>
             </div>
           </div>
         ))}

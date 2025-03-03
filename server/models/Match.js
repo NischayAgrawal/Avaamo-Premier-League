@@ -12,12 +12,21 @@ const matchSchema = new mongoose.Schema({
   team1: {
     name: String,
     score: String,
+    sets: [Number],
   },
   team2: {
     name: String,
     score: String,
+    sets: [Number],
   },
-  result: String,
+  result: {
+    type: String,
+    required: true,
+  },
+  isProcessed: {
+    type: Boolean,
+    default: false,
+  },
   date: {
     type: Date,
     default: Date.now,
