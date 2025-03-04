@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Plus, Edit2, Trash2, Save, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Check, X } from "lucide-react";
 import axios from "axios";
 import { useYear } from "../context/YearContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Rule {
   _id: string;
@@ -18,27 +19,43 @@ function MatchRules() {
   const [editedContent, setEditedContent] = useState("");
   const [newRule, setNewRule] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchRules();
-  }, [sportName]);
+  }, [sportName, selectedYear]);
+
+  const formatSportName = (name: string | undefined) => {
+    if (!name) return "";
+    return name
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   const fetchRules = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `http://localhost:3000/api/rules?sport=${sportName}&year=${selectedYear}`
       );
       setRules(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching rules:", error);
+      setIsLoading(false);
     }
   };
 
   const handleAdd = async () => {
+    if (!newRule.trim()) {
+      alert("Rule content cannot be empty.");
+      return;
+    }
     try {
       await axios.post("http://localhost:3000/api/rules", {
         sport: sportName,
-        content: newRule,
+        content: newRule.trim(),
         year: selectedYear,
       });
       setNewRule("");
@@ -55,9 +72,13 @@ function MatchRules() {
   };
 
   const handleSave = async (ruleId: string) => {
+    if (!editedContent.trim()) {
+      alert("Rule content cannot be empty.");
+      return;
+    }
     try {
       await axios.patch(`http://localhost:3000/api/rules/${ruleId}`, {
-        content: editedContent,
+        content: editedContent.trim(),
       });
       setEditingId(null);
       fetchRules();
@@ -76,94 +97,191 @@ function MatchRules() {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <header className="flex justify-center items-center mb-6">
-        <h2 className="text-4xl font-bold text-gray-800">Rules</h2>
-      </header>
-      <div className="flex justify-end">
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700"
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto p-6"
+    >
+      <motion.header
+        className="flex flex-col justify-center items-center mb-10"
+        initial={{ y: -50 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
+        <div className="relative mb-2">
+          <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-800">
+            Match Rules
+          </h2>
+          <div className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-800 rounded-full"></div>
+        </div>
+        <p className="text-xl text-gray-600 mt-4">
+          {formatSportName(sportName)} - {selectedYear}
+        </p>
+      </motion.header>
+
+      <div className="flex justify-end mb-6">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-blue-500 to-blue-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+          onClick={() => setShowAddForm(!showAddForm)}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
         >
-          <Plus className="w-5 h-5" />
-          <span>Add Rule</span>
-        </button>
+          <Plus className="mr-1" />
+          <span>{showAddForm ? "Cancel" : "Add Rule"}</span>
+        </motion.button>
       </div>
 
-      {showAddForm && (
-        <div className="p-4 bg-gray-100 rounded-md">
-          <h3 className="text-xl font-semibold mb-4">Add New Rule</h3>
-          <textarea
-            value={newRule}
-            onChange={(e) => setNewRule(e.target.value)}
-            className="w-full h-32 p-2 border rounded-md resize-none"
-            placeholder="Enter rule content..."
-          />
-          <div className="flex justify-end space-x-2 mt-4">
-            <button
-              onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+      <AnimatePresence>
+        {showAddForm && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mb-10 overflow-hidden"
+          >
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="p-8 bg-white rounded-xl shadow-lg border-t-4 border-blue-500"
             >
-              Cancel
-            </button>
-            <button
-              onClick={handleAdd}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center">
+                <Plus className="mr-3 text-blue-500" />
+                Add New Rule
+              </h3>
+
+              <div className="p-6 bg-blue-50 rounded-xl shadow-inner">
+                <textarea
+                  value={newRule}
+                  onChange={(e) => setNewRule(e.target.value)}
+                  className="w-full h-32 p-4 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200 resize-none"
+                  placeholder="Enter rule content..."
+                />
+              </div>
+
+              <div className="mt-8 flex justify-center gap-4">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                  onClick={() => setShowAddForm(false)}
+                >
+                  <X className="mr-2" /> Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-lg font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={handleAdd}
+                >
+                  <Check className="mr-2" /> Add Rule
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {isLoading ? (
+        <div className="flex justify-center items-center p-12">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+        </div>
+      ) : rules.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gray-50 rounded-xl p-12 text-center shadow-md"
+        >
+          <p className="text-xl text-gray-600">
+            No rules found for this sport and year.
+          </p>
+          <p className="mt-2 text-gray-500">
+            Click 'Add Rule' to create your first rule.
+          </p>
+        </motion.div>
+      ) : (
+        <div className="grid gap-8">
+          {rules.map((rule, index) => (
+            <motion.div
+              key={rule._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow:
+                  "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+              }}
+              className="p-6 bg-white rounded-xl shadow-md border-l-4 border-blue-500 hover:border-l-8 transition-all duration-300"
             >
-              Add Rule
-            </button>
-          </div>
+              {editingId === rule._id ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="p-4 bg-blue-50 rounded-lg shadow-inner mb-4">
+                    <textarea
+                      value={editedContent}
+                      onChange={(e) => setEditedContent(e.target.value)}
+                      className="w-full h-32 p-4 border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200 resize-none"
+                    />
+                  </div>
+                  <div className="flex justify-end mt-6 gap-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setEditingId(null)}
+                      className="px-6 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg flex items-center shadow-md hover:shadow-lg transition-all duration-300"
+                    >
+                      <X className="mr-2" /> Cancel
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleSave(rule._id)}
+                      className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg flex items-center shadow-md hover:shadow-lg transition-all duration-300"
+                    >
+                      <Check className="mr-2" /> Save Changes
+                    </motion.button>
+                  </div>
+                </motion.div>
+              ) : (
+                <div className="flex justify-between items-start">
+                  <p className="text-gray-800 flex-1 text-lg">{rule.content}</p>
+                  <div className="flex space-x-4 ml-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center space-x-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition shadow"
+                      onClick={() => handleEdit(rule)}
+                    >
+                      <Edit2 className="w-4 h-4 mr-1" />
+                      <span>Edit</span>
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center space-x-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition shadow"
+                      onClick={() => handleDelete(rule._id)}
+                    >
+                      <Trash2 className="w-4 h-4 mr-1" />
+                      <span>Delete</span>
+                    </motion.button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          ))}
         </div>
       )}
-
-      <div className="space-y-4">
-        {rules.map((rule) => (
-          <div key={rule._id} className="p-4 bg-gray-100 rounded-md">
-            {editingId === rule._id ? (
-              <div>
-                <textarea
-                  value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                  className="w-full h-32 p-2 border rounded-md resize-none mb-4"
-                />
-                <div className="flex justify-end space-x-2">
-                  <button
-                    onClick={() => setEditingId(null)}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={() => handleSave(rule._id)}
-                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex justify-between items-start">
-                <p className="text-gray-800 flex-1">{rule.content}</p>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleEdit(rule)}
-                    className="px-2 py-1 text-blue-600 hover:text-blue-800"
-                  >
-                    <Edit2 className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(rule._id)}
-                    className="px-2 py-1 text-red-600 hover:text-red-800"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+    </motion.div>
   );
 }
 
