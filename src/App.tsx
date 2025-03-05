@@ -1,3 +1,4 @@
+// App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SportPage from "./pages/SportPage";
@@ -5,7 +6,9 @@ import Leaderboard from "./components/Leaderboard";
 import MatchFacts from "./components/MatchFacts";
 import MatchRules from "./components/MatchRules";
 import Gallery from "./components/Gallery";
+import LeaderboardPage from "./pages/LeaderboardPage"; // New import
 import { YearProvider } from "./context/YearContext";
+
 function App() {
   return (
     <YearProvider>
@@ -19,6 +22,8 @@ function App() {
               <Route path="match-rules" element={<MatchRules />} />
               <Route path="gallery" element={<Gallery />} />
             </Route>
+            <Route path="/leaderboard" element={<LeaderboardPage />} />{" "}
+            {/* New route */}
           </Routes>
         </div>
       </Router>

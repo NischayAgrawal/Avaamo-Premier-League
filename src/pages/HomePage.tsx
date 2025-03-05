@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import { useYear } from "../context/YearContext";
+import AggregatedLeaderboard from "../components/AggregatedLeaderboard"; // Import the new component
 
 const ALL_SPORTS = [
   "Cricket",
@@ -193,11 +194,6 @@ function HomePage() {
         <div className="container mx-auto px-6 py-16 max-w-6xl relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
-              {/*<div className="inline-flex items-center bg-blue-500/40 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg transform hover:scale-105 transition-all duration-300">
-                <Trophy className="w-5 h-5 mr-2 text-yellow-300" />
-                <span className="font-medium">Sports Management Platform</span>
-              </div>*/}
-
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
                 Avaamo Premier
                 <div className="relative inline-block">
@@ -326,6 +322,13 @@ function HomePage() {
           </div>
         </div>
 
+        {/* New: Aggregated Leaderboard Section */}
+        {selectedYear && (
+          <div className="mb-12">
+            <AggregatedLeaderboard year={selectedYear} />
+          </div>
+        )}
+
         <div
           id="manage-sports"
           className="bg-white rounded-3xl shadow-xl p-8 mb-12 border border-gray-100"
@@ -438,12 +441,6 @@ function HomePage() {
                 You can add sports using the dropdown above or reload to include
                 default sports.
               </p>
-              {/*<button
-                onClick={() => document.querySelector("select")?.focus()}
-                className="px-6 py-3 bg-blue-600 text-white font-medium rounded-xl shadow-md hover:bg-blue-700 transition-all duration-300"
-              >
-                Add Your First Sport
-              </button>*/}
             </div>
           )}
         </div>

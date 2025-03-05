@@ -25,19 +25,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Update photo
-/*
-router.patch('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const photo = await Gallery.findByIdAndUpdate(id, req.body, { new: true });
-    res.json(photo);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-*/
-
 // Delete photo
 router.delete("/:id", async (req, res) => {
   try {
