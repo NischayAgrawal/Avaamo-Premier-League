@@ -18,6 +18,7 @@ router.get("/aggregated/:year", async (req, res) => {
           totalWins: { $sum: "$wins" },
           totalDraws: { $sum: "$draws" },
           totalLosses: { $sum: "$losses" },
+          matchesPlayed: { $sum: "$matchesPlayed" }, // Added matchesPlayed aggregation
         },
       },
       {
@@ -29,6 +30,7 @@ router.get("/aggregated/:year", async (req, res) => {
           totalWins: 1,
           totalDraws: 1,
           totalLosses: 1,
+          matchesPlayed: 1, // Include matchesPlayed in the projection
           _id: 0,
         },
       },

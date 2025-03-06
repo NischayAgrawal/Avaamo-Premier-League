@@ -11,6 +11,7 @@ interface AggregatedTeam {
   totalWins: number;
   totalDraws: number;
   totalLosses: number;
+  matchesPlayed: number; // Added for consistency with Leaderboard
 }
 
 const AggregatedLeaderboard: React.FC = () => {
@@ -32,7 +33,16 @@ const AggregatedLeaderboard: React.FC = () => {
       const response = await axios.get(
         `http://localhost:3000/api/teams/aggregated/${selectedYear}`
       );
-      setTeams(response.data);
+
+      // Calculate matchesPlayed if it's not returned from API
+      const teamsWithMatches = response.data.map((team: AggregatedTeam) => ({
+        ...team,
+        matchesPlayed:
+          team.matchesPlayed ||
+          team.totalWins + team.totalDraws + team.totalLosses,
+      }));
+
+      setTeams(teamsWithMatches);
     } catch (error) {
       console.error("Error fetching aggregated leaderboard:", error);
       setError("Failed to load leaderboard data");
@@ -115,7 +125,16 @@ const AggregatedLeaderboard: React.FC = () => {
                 Total Points
               </th>
               <th className="py-3 px-4 text-left text-gray-600 font-medium text-sm whitespace-nowrap">
-                W/D/L
+                Matches Played
+              </th>
+              <th className="py-3 px-4 text-left text-gray-600 font-medium text-sm whitespace-nowrap">
+                Wins
+              </th>
+              <th className="py-3 px-4 text-left text-gray-600 font-medium text-sm whitespace-nowrap">
+                Draws
+              </th>
+              <th className="py-3 px-4 text-left text-gray-600 font-medium text-sm whitespace-nowrap">
+                Losses
               </th>
             </tr>
           </thead>
@@ -143,8 +162,11 @@ const AggregatedLeaderboard: React.FC = () => {
                   {team.totalPoints}
                 </td>
                 <td className="py-4 px-4 text-gray-600">
-                  {team.totalWins}/{team.totalDraws}/{team.totalLosses}
+                  {team.matchesPlayed}
                 </td>
+                <td className="py-4 px-4 text-gray-600">{team.totalWins}</td>
+                <td className="py-4 px-4 text-gray-600">{team.totalDraws}</td>
+                <td className="py-4 px-4 text-gray-600">{team.totalLosses}</td>
               </tr>
             ))}
           </tbody>

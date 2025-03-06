@@ -158,7 +158,7 @@ const MatchDisplay = ({ match, sportName }) => {
         </div>
       </div>
 
-      {/* Result display */}
+      {/* Result display
       <div className="mt-4 pt-3 border-t border-gray-200">
         <p className="text-gray-700">
           <span className="font-medium text-gray-600">Winner:</span>{" "}
@@ -166,7 +166,7 @@ const MatchDisplay = ({ match, sportName }) => {
             {match.result === "Draw" ? "Draw" : match.result || "Pending"}
           </span>
         </p>
-      </div>
+      </div> */}
     </div>
   );
 };
