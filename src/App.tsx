@@ -1,12 +1,13 @@
-// App.tsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SportPage from "./pages/SportPage";
+import AggregatedLeaderboard from "./components/AggregatedLeaderboard";
+import ManageSports from "./components/ManageSports";
+import ManageTeams from "./components/ManageTeams";
 import Leaderboard from "./components/Leaderboard";
 import MatchFacts from "./components/MatchFacts";
 import MatchRules from "./components/MatchRules";
 import Gallery from "./components/Gallery";
-import LeaderboardPage from "./pages/LeaderboardPage"; // New import
 import { YearProvider } from "./context/YearContext";
 
 function App() {
@@ -15,15 +16,19 @@ function App() {
       <Router>
         <div className="min-h-screen bg-gray-100">
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            {/* HomePage with nested routes */}
+            <Route path="/" element={<HomePage />}>
+              <Route index element={<AggregatedLeaderboard />} />
+              <Route path="manage-sports" element={<ManageSports />} />
+              <Route path="manage-teams" element={<ManageTeams />} />
+            </Route>
+            {/* SportPage with nested routes */}
             <Route path="/sport/:sportName" element={<SportPage />}>
               <Route path="leaderboard" element={<Leaderboard />} />
               <Route path="match-facts" element={<MatchFacts />} />
               <Route path="match-rules" element={<MatchRules />} />
               <Route path="gallery" element={<Gallery />} />
             </Route>
-            <Route path="/leaderboard" element={<LeaderboardPage />} />{" "}
-            {/* New route */}
           </Routes>
         </div>
       </Router>

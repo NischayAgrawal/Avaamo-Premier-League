@@ -21,6 +21,7 @@ function Leaderboard() {
   const { sportName } = useParams<{ sportName: string }>();
   const [teams, setTeams] = useState<Team[]>([]);
   const { selectedYear } = useYear();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchTeams();
@@ -36,13 +37,16 @@ function Leaderboard() {
 
   const fetchTeams = async () => {
     if (!sportName || !selectedYear) return;
+    setIsLoading(true);
     try {
       const response = await axios.get(
         `http://localhost:3000/api/teams?sport=${sportName}&year=${selectedYear}`
       );
       setTeams(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching teams:", error);
+      setIsLoading(false);
     }
   };
 
@@ -70,106 +74,118 @@ function Leaderboard() {
             {formatSportName(sportName)} - {selectedYear}
           </p>
         </motion.header>
-        <div className="overflow-x-auto">
-          {teams.length > 0 ? (
-            <table className="min-w-full table-auto border-collapse">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
-                    Rank
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
-                    Team Name
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
-                    Matches Played
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
-                    Wins
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
-                    Losses
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
-                    Draws
-                  </th>
-                  <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
-                    Total Points
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {teams.map((team) => (
-                  <tr
-                    key={team._id}
-                    className={`${
-                      team.rank === 1
-                        ? "bg-yellow-100 border-l-4 border-yellow-500"
-                        : "bg-white"
-                    } hover:bg-gray-50`}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`text-sm font-bold ${
-                          team.rank === 1 ? "text-yellow-600" : "text-gray-800"
-                        }`}
-                      >
-                        {team.rank}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`text-sm font-semibold ${
-                          team.rank === 1 ? "text-yellow-800" : "text-gray-800"
-                        }`}
-                      >
-                        {team.name}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-800">
-                        {team.matchesPlayed}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-800">{team.wins}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-800">
-                        {team.losses}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-800">
-                        {team.draws}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`text-sm font-bold ${
-                          team.rank === 1
-                            ? "text-yellow-800 text-lg"
-                            : "text-gray-800"
-                        }`}
-                      >
-                        {team.totalPoints}
-                      </span>
-                    </td>
+        {isLoading ? (
+          <div className="flex justify-center items-center p-12">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            {teams.length > 0 ? (
+              <table className="min-w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-gray-100">
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
+                      Rank
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
+                      Team Name
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
+                      Matches Played
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
+                      Wins
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
+                      Losses
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
+                      Draws
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-600 uppercase">
+                      Total Points
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-700">
-                No teams available for the selected sport and year.
-              </h3>
-              <p className="text-gray-500">
-                Please check back later or add teams to this sport.
-              </p>
-            </div>
-          )}
-        </div>
+                </thead>
+                <tbody>
+                  {teams.map((team) => (
+                    <tr
+                      key={team._id}
+                      className={`${
+                        team.rank === 1
+                          ? "bg-yellow-100 border-l-4 border-yellow-500"
+                          : "bg-white"
+                      } hover:bg-gray-50`}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`text-sm font-bold ${
+                            team.rank === 1
+                              ? "text-yellow-600"
+                              : "text-gray-800"
+                          }`}
+                        >
+                          {team.rank}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`text-sm font-semibold ${
+                            team.rank === 1
+                              ? "text-yellow-800"
+                              : "text-gray-800"
+                          }`}
+                        >
+                          {team.name}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-800">
+                          {team.matchesPlayed}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-800">
+                          {team.wins}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-800">
+                          {team.losses}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm text-gray-800">
+                          {team.draws}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`text-sm font-bold ${
+                            team.rank === 1
+                              ? "text-yellow-800 text-lg"
+                              : "text-gray-800"
+                          }`}
+                        >
+                          {team.totalPoints}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-center py-12">
+                <h3 className="text-lg font-medium text-gray-700">
+                  No teams available for the selected sport and year.
+                </h3>
+                <p className="text-gray-500">
+                  Please check back later or add teams to this sport.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </motion.div>
     </div>
   );

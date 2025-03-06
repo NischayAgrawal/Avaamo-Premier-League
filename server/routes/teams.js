@@ -65,4 +65,46 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+//update team name
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name } = req.body;
+
+  try {
+    // Find the team
+    const team = await Team.findById(id);
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    const oldName = team.name;
+    const { sport, year } = team;
+
+    // Check for duplicate team name in the same sport and year
+    const existingTeam = await Team.findOne({ name, sport, year });
+    if (existingTeam && existingTeam._id.toString() !== id) {
+      return res
+        .status(400)
+        .json({ message: "Team name already exists for this sport and year" });
+    }
+
+    // Update team name
+    team.name = name;
+    await team.save();
+
+    // Update all matches where this team appears for the same year
+    await Match.updateMany(
+      { year, "team1.name": oldName },
+      { $set: { "team1.name": name } }
+    );
+    await Match.updateMany(
+      { year, "team2.name": oldName },
+      { $set: { "team2.name": name } }
+    );
+
+    res.json({ message: "Team name updated successfully", team });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 export default router;

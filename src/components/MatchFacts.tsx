@@ -54,9 +54,7 @@ function MatchFacts() {
     fetchMatches();
   }, [sportName, selectedYear]);
 
-  // Calculate result based on sport type
   const calculateResult = (matchData: typeof newMatch): string => {
-    // For sports with a final numeric score (football, basketball, cricket)
     if (["football", "basketball", "cricket"].includes(sportName || "")) {
       if (sportName === "cricket") {
         const parseScore = (score: string) => {
@@ -67,23 +65,20 @@ function MatchFacts() {
         const team1Score = parseScore(matchData.team1.score);
         const team2Score = parseScore(matchData.team2.score);
 
-        // If runs are invalid or missing
         if (isNaN(team1Score.runs) || isNaN(team2Score.runs))
           return "Invalid Scores";
 
-        // Compare runs first, then wickets if runs are equal
         if (team1Score.runs > team2Score.runs) {
           return `${matchData.team1.name}`;
         } else if (team1Score.runs < team2Score.runs) {
           return `${matchData.team2.name}`;
         } else {
-          // Compare wickets if runs are equal (fewer wickets is better)
           if (team1Score.wickets > team2Score.wickets) {
             return `${matchData.team2.name}`;
           } else if (team1Score.wickets < team2Score.wickets) {
             return `${matchData.team1.name}`;
           } else {
-            return "Draw"; // Runs and wickets are equal
+            return "Draw";
           }
         }
       } else {
@@ -96,9 +91,7 @@ function MatchFacts() {
           ? `${matchData.team2.name}`
           : "Draw";
       }
-    }
-    // For sports decided by sets (badminton, table tennis, volleyball, throwball)
-    else if (
+    } else if (
       ["badminton", "table-tennis", "volleyball", "throwball"].includes(
         sportName || ""
       )
@@ -122,7 +115,6 @@ function MatchFacts() {
     return "No Result";
   };
 
-  // Fetch matches from backend
   const fetchMatches = async () => {
     setIsLoading(true);
     try {
@@ -137,7 +129,6 @@ function MatchFacts() {
     }
   };
 
-  // Add a new match
   const handleAdd = async () => {
     const calculatedResult = calculateResult(newMatch);
     try {
@@ -159,7 +150,6 @@ function MatchFacts() {
     }
   };
 
-  // Prepare to edit an existing match
   const handleEdit = (match: Match) => {
     setEditingId(match._id);
     setEditedMatch({
@@ -177,7 +167,6 @@ function MatchFacts() {
     });
   };
 
-  // Update an existing match
   const handleUpdate = async () => {
     const calculatedResult = calculateResult(editedMatch);
     try {
@@ -197,7 +186,6 @@ function MatchFacts() {
     }
   };
 
-  // Delete a match
   const handleDelete = async (matchId: string) => {
     try {
       await axios.delete(`http://localhost:3000/api/matches/${matchId}`);
@@ -207,7 +195,6 @@ function MatchFacts() {
     }
   };
 
-  // Format sport name for display
   const formatSportName = (name: string | undefined) => {
     if (!name) return "";
     return name
@@ -251,7 +238,6 @@ function MatchFacts() {
             <Edit2 className="mr-3 text-blue-500" /> Edit Match
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Team 1 Edit */}
             <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
               <label className="block text-lg font-medium text-gray-700 mb-3">
                 Team 1
@@ -311,7 +297,6 @@ function MatchFacts() {
               )}
             </div>
 
-            {/* Team 2 Edit */}
             <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
               <label className="block text-lg font-medium text-gray-700 mb-3">
                 Team 2
@@ -429,7 +414,6 @@ function MatchFacts() {
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Team 1 Section */}
                     <div className="space-y-4 p-6 bg-blue-50 rounded-xl shadow-inner">
                       <label className="block text-lg font-semibold text-gray-700">
                         Team 1 Details
@@ -446,7 +430,6 @@ function MatchFacts() {
                         placeholder="Enter Team 1 Name"
                         className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                       />
-
                       {["football", "basketball", "cricket"].includes(
                         sportName || ""
                       ) ? (
@@ -503,7 +486,6 @@ function MatchFacts() {
                       )}
                     </div>
 
-                    {/* Team 2 Section */}
                     <div className="space-y-4 p-6 bg-indigo-50 rounded-xl shadow-inner">
                       <label className="block text-lg font-semibold text-gray-700">
                         Team 2 Details
@@ -520,7 +502,6 @@ function MatchFacts() {
                         placeholder="Enter Team 2 Name"
                         className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-all duration-200"
                       />
-
                       {["football", "basketball", "cricket"].includes(
                         sportName || ""
                       ) ? (
@@ -578,7 +559,6 @@ function MatchFacts() {
                     </div>
                   </div>
 
-                  {/* Add Match Button */}
                   <div className="mt-8 flex justify-center">
                     <motion.button
                       whileHover={{ scale: 1.05 }}
@@ -633,7 +613,6 @@ function MatchFacts() {
                       <span className="mx-3 text-blue-500 font-bold">vs</span>
                       <span>{match.team2.name}</span>
                     </h4>
-
                     {match.date && (
                       <div className="flex items-center text-gray-600">
                         <Calendar className="w-5 h-5 mr-2 text-blue-500" />
@@ -645,33 +624,14 @@ function MatchFacts() {
                   <div className="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg">
                     <div className="flex flex-col md:flex-row items-center justify-between">
                       <div className="flex-1 p-4 text-center transform transition-transform hover:scale-105">
-                        {/*<h5 className="font-semibold text-lg mb-2">
-                          {match.team1.name}
-                        </h5>*/}
                         <MatchDisplay
                           match={match}
                           sportName={sportName}
                           teamIndex={1}
                         />
                       </div>
-
-                      {/*<div className="hidden md:flex items-center justify-center p-4">
-                        <ArrowRight className="text-blue-500 mx-4" />
-                      </div>
-
-                      <div className="flex-1 p-4 text-center transform transition-transform hover:scale-105">
-                        <h5 className="font-semibold text-lg mb-2">
-                          {match.team2.name}
-                        </h5>
-                        <MatchDisplay
-                          match={match}
-                          sportName={sportName}
-                          teamIndex={2}
-                        />
-                      </div>*/}
                     </div>
-
-                    {/*{match.result && match.result !== "Draw" && (
+                    {match.result && match.result !== "Draw" && (
                       <div className="mt-4 p-2 bg-blue-100 rounded-lg text-center">
                         <div className="flex items-center justify-center">
                           <Trophy className="mr-2 text-blue-600" />
@@ -680,8 +640,7 @@ function MatchFacts() {
                           </span>
                         </div>
                       </div>
-                    )}*/}
-
+                    )}
                     {match.result === "Draw" && (
                       <div className="mt-4 p-2 bg-gray-100 rounded-lg text-center">
                         <span className="font-semibold text-gray-700">
@@ -691,7 +650,6 @@ function MatchFacts() {
                     )}
                   </div>
 
-                  {/* Edit and Delete buttons */}
                   <div className="flex justify-end space-x-4">
                     <motion.button
                       whileHover={{ scale: 1.05 }}

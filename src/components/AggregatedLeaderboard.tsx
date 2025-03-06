@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Medal, Award, Trophy } from "lucide-react";
+import { useYear } from "../context/YearContext";
 
 interface AggregatedTeam {
   name: string;
@@ -12,27 +13,24 @@ interface AggregatedTeam {
   totalLosses: number;
 }
 
-interface LeaderboardProps {
-  year: number;
-}
-
-const AggregatedLeaderboard: React.FC<LeaderboardProps> = ({ year }) => {
+const AggregatedLeaderboard: React.FC = () => {
+  const { selectedYear } = useYear();
   const [teams, setTeams] = useState<AggregatedTeam[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (year) {
+    if (selectedYear) {
       fetchAggregatedLeaderboard();
     }
-  }, [year]);
+  }, [selectedYear]);
 
   const fetchAggregatedLeaderboard = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/teams/aggregated/${year}`
+        `http://localhost:3000/api/teams/aggregated/${selectedYear}`
       );
       setTeams(response.data);
     } catch (error) {
@@ -43,7 +41,6 @@ const AggregatedLeaderboard: React.FC<LeaderboardProps> = ({ year }) => {
     }
   };
 
-  // Helper function to determine medal color
   const getMedalColor = (position: number) => {
     switch (position) {
       case 0:
@@ -98,13 +95,12 @@ const AggregatedLeaderboard: React.FC<LeaderboardProps> = ({ year }) => {
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
         <h2 className="text-xl font-bold text-white flex items-center">
           <Trophy className="w-5 h-5 mr-2" />
-          Overall Leaderboard {year}
+          Overall Leaderboard {selectedYear}
         </h2>
         <p className="text-blue-100 text-sm">
           Teams ranked by total points across all sports
         </p>
       </div>
-
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
